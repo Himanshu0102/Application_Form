@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <title>Dashboard</title>
+</head>
+
+<style>
+    body {
+        overflow-x: hidden;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    table.table th,
+    table.table td {
+        font-size: 13px;
+        text-align: center;
+    }
+
+    table.table thead th {
+        text-align: center;
+    }
+
+    .btn {
+        font-size: 12px;
+        padding: 4px 8px;
+    }
+
+    .navbar h4 {
+        text-align: center;
+        width: 100%;
+        margin: 0;
+    }
+
+    .logo_image {
+        width: 165px;
+        height: auto;
+    }
+
+    .invalid-feedback {
+        color: red;
+        font-size: 12px;
+        display: none;
+    }
+
+    .valid-feedback {
+        color: green;
+        font-size: 12px;
+        display: none;
+    }
+
+    .astrisk{
+        color: red;
+        size: 50px;
+    }
+
+    /* .table-field:invalid {
+        border: 2px solid red;
+    } */
+</style>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <div class="navbar-brand ml-auto">
+                <img src="{{ url_for('static', filename='AgTech_iCon.png') }}" class="logo_image" alt="Your Logo">
+            </div>
+            <h4>Consultant On-boarding Application Form</h4>
+            <div id="currentDateTime">Current Date and Time</div>
+        </div>
+    </nav>
+    <script>
+        function updateCurrentDateTime() {
+            const currentDateTimeElement = document.getElementById("currentDateTime");
+            const now = new Date();
+
+            const day = now.getDate().toString().padStart(2, '0');
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const year = now.getFullYear();
+
+            const formattedDate = `${day}/${month}/${year}`;
+
+            const formattedTime = now.toLocaleTimeString();
+            const dateTimeString = `${formattedDate} ${formattedTime}`;
+            currentDateTimeElement.textContent = dateTimeString;
+        }
+
+        updateCurrentDateTime();
+
+        setInterval(updateCurrentDateTime, 1000);
+    </script>
+    &NonBreakingSpace;
+
+    <form class="row g-3 needs-validation" novalidate action="/submit" method="POST">>
+        <div class="col-md-4">
+            <label for="validationCustom01" class="form-label">Full Name</label>
+            <input type="text" class="form-control" id="validationCustom01" name="full_name" required>
+            <div class="invalid-feedback">
+                Please provide a full name.
+            </div>
+        </div>
+        <div class="col-md-4">
+            <label for="validationCustomUsername" class="form-label">Email</label>
+            <div class="input-group has-validation">
+                <span class="input-group-text" id="inputGroupPrepend">@</span>
+                <input type="text" class="form-control" id="validationCustomUsername" name="username"
+                    aria-describedby="inputGroupPrepend" required>
+                <div class="invalid-feedback">
+                    Please choose a Mail ID.
+                </div>
+            </div>
+        </div>
+        <h6>Kindly fill the details in below format as number of use cases done with Industry wise and Domain Wise.<span class="astrisk"> *</span></h6>
+        <!-- <div class="col-md-6">
+            <label for="validationCustom03" class="form-label">City</label>
+            <input type="text" class="form-control" id="validationCustom03" name="city" required>
+            <div class="invalid-feedback">
+                Please provide a valid city.
+            </div>
+        </div> -->
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">S.No</th>
+                    <th scope="col">Industry Name</th>
+                    <th scope="col">Industry Type</th>
+                    <th scope="col">Domain Name</th>
+                    <th scope="col">Use Case Name</th>
+                    <th scope="col">Short description</th>
+                    <th scope="col">Tools & Technologies used</th>
+                    <th scope="col">Role Played</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="data-row">
+                    <td class="sno">1</td>
+                    <td><input type="text" class="form-control table-field" value="" name="Industry_Name[]" required>
+                    </td>
+                    <td><input type="text" class="form-control table-field" value="" name="Industry_Type[]" required>
+                    </td>
+                    <td><input type="text" class="form-control table-field" value="" name="Domain_Name[]" required></td>
+                    <td><input type="text" class="form-control table-field" value="" name="Use_Case_Name[]" required>
+                    </td>
+                    <td><input type="text" class="form-control table-field" value="" name="Short_description[]"
+                            required></td>
+                    <td><input type="text" class="form-control table-field" value="" name="Tools_&_Technologies_used[]"
+                            required></td>
+                    <td><input type="text" class="form-control table-field" value="" name="Role_Played[]" required></td>
+                    <td class="status"></td>
+                    <td><button class="btn btn-primary edit-button" type="button">Add</button></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="col-12"><button class="btn btn-primary" type="submit">Submit Form</button></div>
+    </form>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.querySelector(".needs-validation");
+            const tbody = document.querySelector("tbody");
+
+            function updateSNo() {
+                const rows = tbody.querySelectorAll(".data-row");
+                rows.forEach((row, index) => {
+                    row.querySelector(".sno").textContent = index + 1;
+                });
+            }
+
+            function handleFormSubmit(event) {
+                event.preventDefault();
+                const form = event.target;
+
+                // Use the Fetch API to submit the form data
+                fetch('/submit', {
+                    method: 'POST',
+                    body: new FormData(form),
+                })
+                
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Show a success message in a pop-up
+                            alert(data.success);
+                            // Optionally, reset the form after a successful submission
+                            form.reset();
+                            window.location.reload();
+                        } else {
+                            // Show an error message in a pop-up
+                            alert(data.message);
+                        }
+                    })
+                    
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const form = document.querySelector(".needs-validation");
+                form.addEventListener("submit", handleFormSubmit);
+            });
+
+            document.addEventListener("click", function (event) {
+                if (event.target.classList.contains("edit-button")) {
+                    const lastRow = document.querySelector(".data-row:last-of-type");
+                    const newRow = lastRow.cloneNode(true);
+
+                    // Clear input values in the new row
+                    var newRowInputs = newRow.querySelectorAll("input");
+                    newRowInputs.forEach(input => input.value = "");
+
+                    // Clear validation messages in the new row
+                    var newRowFeedback = newRow.querySelectorAll(".invalid-feedback, .valid-feedback");
+                    newRowFeedback.forEach(feedback => feedback.style.display = "none");
+
+                    const deleteButton = document.createElement("button");
+                    deleteButton.classList.add("btn", "btn-danger", "delete-button");
+                    deleteButton.type = "button";
+                    deleteButton.textContent = "-";
+                    newRow.querySelector("td:last-child").innerHTML = "";
+                    newRow.querySelector("td:last-child").appendChild(deleteButton);
+
+                    tbody.appendChild(newRow);
+
+                    updateSNo();
+                }
+            });
+
+            tbody.addEventListener("click", function (event) {
+                if (event.target.classList.contains("delete-button")) {
+                    const row = event.target.closest(".data-row");
+                    if (row) {
+                        row.remove();
+                        updateSNo();
+                    }
+                }
+            });
+
+            form.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                // Check if any table field is empty
+                const rows = tbody.querySelectorAll(".data-row");
+                let tableValid = true;
+
+                rows.forEach((row) => {
+                    const inputs = row.querySelectorAll(".table-field");
+                    inputs.forEach((input) => {
+                        if (!input.value.trim()) {
+                            tableValid = false;
+                            input.classList.add("is-invalid");
+                        } else {
+                            input.classList.remove("is-invalid");
+                        }
+                    });
+                });
+
+                if (!form.checkValidity() || !tableValid) {
+                    event.stopPropagation();
+                    form.classList.add("was-validated");
+                    // form.reset();
+                } else {
+                    // If both form and table are valid, submit the form
+                    // You can handle the form submission using Fetch API as shown in your code
+                    // Or replace it with your preferred form submission method
+                    // alert("Form is valid. You can handle the submission here.");
+                    form.submit();
+                    // handleFormSubmit(event);
+                    // form.reset();
+
+                }
+                // form.reset();
+            });
+
+            // Add input event listeners for immediate validation to existing rows
+            const tableInputs = document.querySelectorAll(".table-field");
+            tableInputs.forEach((input) => {
+                input.addEventListener("input", function () {
+                    const invalidFeedback = input.parentElement.querySelector(".invalid-feedback");
+                    if (!input.value.trim()) {
+                        invalidFeedback.style.display = "block";
+                    } else {
+                        invalidFeedback.style.display = "none";
+                    }
+                });
+            });
+        });
+    </script>
+
+    <!-- <script>
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+
+            // Use the Fetch API to submit the form data
+            fetch('/submit', {
+                method: 'POST',
+                body: new FormData(form),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Show a success message in a pop-up
+                        alert(data.success);
+                        // Optionally, reset the form after a successful submission
+                        form.reset();
+                    } else {
+                        // Show an error message in a pop-up
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.querySelector(".needs-validation");
+            form.addEventListener("submit", handleFormSubmit);
+        });
+
+    </script> -->
+
+    <!-- ... Your existing script tags ... -->
+</body>
+</html>
